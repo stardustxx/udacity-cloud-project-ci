@@ -101,33 +101,33 @@ jobs:
             npm install
             npm run test
             
-  # scan-frontend:
-  #   docker:
-  #     - image: cimg/node:16.1.0
-  #   steps:
-  #     - checkout
-  #     - restore_cache:
-  #         keys: [frontend-build]
-  #     - run:
-  #         name: Analyze Frontend
-  #         command: |
-  #           cd frontend
-  #           npm install
-  #           npm audit --audit-level=critical
+  scan-frontend:
+    docker:
+      - image: cimg/node:16.1.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: Analyze Frontend
+          command: |
+            cd frontend
+            npm install
+            npm audit --audit-level=critical
 
-  # scan-backend:
-  #   docker:
-  #     - image: cimg/node:16.1.0
-  #   steps:
-  #     - checkout
-  #     - restore_cache:
-  #         keys: [backend-build]
-  #     - run:
-  #         name: Analyze Backend
-  #         command: |
-  #           cd backend
-  #           npm install
-  #           npm audit --audit-level=critical
+  scan-backend:
+    docker:
+      - image: cimg/node:16.1.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: Analyze Backend
+          command: |
+            cd backend
+            npm install
+            npm audit --audit-level=critical
 
   deploy-infrastructure:
     docker:
@@ -378,12 +378,13 @@ workflows:
           requires: [build-frontend]
       - test-backend:
           requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
+      # - scan-backend:
+      #     requires: [build-backend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
       - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          requires: [test-frontend, test-backend]
+          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
               only: [test-feature-branch]
