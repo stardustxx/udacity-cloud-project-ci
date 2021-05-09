@@ -101,33 +101,33 @@ jobs:
             npm install
             npm run test
             
-  scan-frontend:
-    docker:
-      - image: cimg/node:16.1.0
-    steps:
-      - checkout
-      - restore_cache:
-          keys: [frontend-build]
-      - run:
-          name: Analyze Frontend
-          command: |
-            cd frontend
-            npm install
-            npm audit --audit-level=critical
+  # scan-frontend:
+  #   docker:
+  #     - image: cimg/node:16.1.0
+  #   steps:
+  #     - checkout
+  #     - restore_cache:
+  #         keys: [frontend-build]
+  #     - run:
+  #         name: Analyze Frontend
+  #         command: |
+  #           cd frontend
+  #           npm install
+  #           npm audit --audit-level=critical
 
-  scan-backend:
-    docker:
-      - image: cimg/node:16.1.0
-    steps:
-      - checkout
-      - restore_cache:
-          keys: [backend-build]
-      - run:
-          name: Analyze Backend
-          command: |
-            cd backend
-            npm install
-            npm audit --audit-level=critical
+  # scan-backend:
+  #   docker:
+  #     - image: cimg/node:16.1.0
+  #   steps:
+  #     - checkout
+  #     - restore_cache:
+  #         keys: [backend-build]
+  #     - run:
+  #         name: Analyze Backend
+  #         command: |
+  #           cd backend
+  #           npm install
+  #           npm audit --audit-level=critical
 
   deploy-infrastructure:
     docker:
@@ -194,6 +194,17 @@ jobs:
       - run:
           name: Configure server
           command: |
+            echo ENVIRONMENT=development > backend/.env
+            echo TYPEORM_CONNECTION=postgres >> backend/.env
+            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> backend/.env
+            echo TYPEORM_HOST=$TYPEORM_HOST >> backend/.env
+            echo TYPEORM_PORT=$TYPEORM_PORT >> backend/.env
+            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> backend/.env
+            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> backend/.env
+            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> backend/.env
+            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
+            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
+            echo NODE_ENV=development >> "backend/.env"
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment:
