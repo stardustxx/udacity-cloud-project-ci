@@ -137,6 +137,7 @@ jobs:
       - run:
           name: Ensure back-end infrastructure exists
           command: |
+            echo AWS_REGION:${AWS_DEFAULT_REGION}
             aws cloudformation deploy \
               --region ${AWS_DEFAULT_REGION} \
               --template-file .circleci/files/backend.yml \
@@ -182,7 +183,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["38:a6:53:1b:a7:9b:76:0e:7d:0d:08:73:33:9c:31:31"]
+          fingerprints: ["fb:de:9b:27:f1:a7:ee:8b:59:99:92:b6:22:52:ea:2d"]
       # attach workspace
       - attach_workspace:
           at: ~/project
@@ -269,7 +270,7 @@ jobs:
     steps:
       - checkout
       - add_ssh_keys:
-          fingerprints: ["38:a6:53:1b:a7:9b:76:0e:7d:0d:08:73:33:9c:31:31"]
+          fingerprints: ["fb:de:9b:27:f1:a7:ee:8b:59:99:92:b6:22:52:ea:2d"]
       - attach_workspace:
           at: ~/project
       - restore_cache:
