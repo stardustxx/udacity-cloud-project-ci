@@ -42,8 +42,8 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      # - restore_cache:
-      #     keys: [frontend-build]
+      - restore_cache:
+          keys: [frontend-build]
       - run:
           name: Build front-end
           command: |
@@ -59,8 +59,8 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      # - restore_cache:
-      #     keys: [backend-build]
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Back-end build
           command: |
@@ -138,6 +138,7 @@ jobs:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
+              --region ${AWS_DEFAULT_REGION} \
               --template-file .circleci/files/backend.yml \
               --tags project=udapeople-${CIRCLE_WORKFLOW_ID:0:6} \
               --stack-name "frontend-${CIRCLE_WORKFLOW_ID:0:6}" \
@@ -146,6 +147,7 @@ jobs:
           name: Ensure front-end infrastructure exist
           command: |
             aws cloudformation deploy \
+              --region ${AWS_DEFAULT_REGION} \
               --template-file .circleci/files/frontend.yml \
               --tags project=udapeople-${CIRCLE_WORKFLOW_ID:0:6} \
               --stack-name "backend-${CIRCLE_WORKFLOW_ID:0:6}" \
@@ -154,12 +156,12 @@ jobs:
           name: Add back-end ip to ansible inventory
           command: |
             aws ec2 describe-instances \
-              --region us-east-2 \
+              --region ${AWS_DEFAULT_REGION} \
               --filters "Name=instance-id,Values=udapeople-${CIRCLE_WORKFLOW_ID:0:6}" \
               --query "Reservations[*].Instances[*].PublicIpAddress" \
               --output text >> .circleci/ansible/inventory.txt
             curl -H "Content-Type: text/plain" -H "token: fe750e9c-00a2-409b-ac25-17fcf668b46d" --request PUT --data "aws ec2 describe-instances \
-              --region us-east-2 \
+              --region ${AWS_DEFAULT_REGION} \
               --filters "Name=instance-id,Values=udapeople-${CIRCLE_WORKFLOW_ID:0:6}" \
               --query "Reservations[*].Instances[*].PublicIpAddress" \
               --output text" https://api.memstash.io/values/backend-deployed-${CIRCLE_WORKFLOW_ID:0:6}
