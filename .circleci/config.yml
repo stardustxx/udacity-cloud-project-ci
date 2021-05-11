@@ -184,6 +184,8 @@ jobs:
             echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
             echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
             echo NODE_ENV=development >> "backend/.env"
+      - restore_cache:
+          keys: [backend-build]
       - persist_to_workspace:
           root: ~/project
           paths:
@@ -201,7 +203,6 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["fb:de:9b:27:f1:a7:ee:8b:59:99:92:b6:22:52:ea:2d"]
-      # attach workspace
       - attach_workspace:
           at: ~/project
       - run:
@@ -226,10 +227,13 @@ jobs:
       - checkout
       - restore_cache:
           keys: [backend-build]
+      - attach_workspace:
+          at: ~/project
       - run:
           name: Run migrations
           command: |
             cd backend
+            ls
             cat .env
             npm run migrations >> migration_output.txt
             cat migration_output.txt
@@ -237,11 +241,7 @@ jobs:
           name: Send migration results to memstash
           command: |
             curl -H "Content-Type: text/plain" -H "token: fe750e9c-00a2-409b-ac25-17fcf668b46d" --request PUT \
-              --data "1" https://api.memstash.io/values/migration-${CIRCLE_WORKFLOW_ID:0:6}
-      - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:6}
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:6}      
+              --data "1" https://api.memstash.io/values/migration-${CIRCLE_WORKFLOW_ID:0:6}    
 
   deploy-frontend:
     docker:
