@@ -161,14 +161,16 @@ jobs:
           command: |
             aws ec2 describe-instances \
               --region ${AWS_DEFAULT_REGION} \
-              --filters "Name=instance-id,Values=backend-${CIRCLE_WORKFLOW_ID:0:6}" \
-              --query "Reservations[*].Instances[*].PublicIpAddress" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:project,Values=udapeople-${CIRCLE_WORKFLOW_ID:0:6}" \
               --output text >> .circleci/ansible/inventory.txt
+            cat .circleci/ansible/inventory.txt
             curl -H "Content-Type: text/plain" -H "token: fe750e9c-00a2-409b-ac25-17fcf668b46d" \ 
               --request PUT \ 
               --data `aws ec2 describe-instances \
-                --filters "Name=instance-id,Values=backend-${CIRCLE_WORKFLOW_ID:0:6}" \
-                --query "Reservations[*].Instances[*].PublicIpAddress" \
+                --region ${AWS_DEFAULT_REGION} \
+                --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                --filters "Name=tag:project,Values=udapeople-${CIRCLE_WORKFLOW_ID:0:6}" \
                 --output text` \ 
               https://api.memstash.io/values/backend-deployed-${CIRCLE_WORKFLOW_ID:0:6}
             echo URL: https://api.memstash.io/values/backend-deployed-${CIRCLE_WORKFLOW_ID:0:6}
