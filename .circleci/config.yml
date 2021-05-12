@@ -145,7 +145,7 @@ jobs:
               --region ${AWS_DEFAULT_REGION} \
               --template-file .circleci/files/backend.yml \
               --tags project=udapeople-${CIRCLE_WORKFLOW_ID:0:6} \
-              --stack-name "frontend-${CIRCLE_WORKFLOW_ID:0:6}" \
+              --stack-name "backend-${CIRCLE_WORKFLOW_ID:0:6}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:6}"  
       - run:
           name: Ensure front-end infrastructure exist
@@ -154,20 +154,20 @@ jobs:
               --region ${AWS_DEFAULT_REGION} \
               --template-file .circleci/files/frontend.yml \
               --tags project=udapeople-${CIRCLE_WORKFLOW_ID:0:6} \
-              --stack-name "backend-${CIRCLE_WORKFLOW_ID:0:6}" \
+              --stack-name "frontend-${CIRCLE_WORKFLOW_ID:0:6}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:6}"  
       - run:
           name: Add back-end ip to ansible inventory
           command: |
             aws ec2 describe-instances \
               --region ${AWS_DEFAULT_REGION} \
-              --filters "Name=instance-id,Values=udapeople-${CIRCLE_WORKFLOW_ID:0:6}" \
+              --filters "Name=instance-id,Values=backend-${CIRCLE_WORKFLOW_ID:0:6}" \
               --query "Reservations[*].Instances[*].PublicIpAddress" \
               --output text >> .circleci/ansible/inventory.txt
             curl -H "Content-Type: text/plain" -H "token: fe750e9c-00a2-409b-ac25-17fcf668b46d" \ 
               --request PUT \ 
               --data `aws ec2 describe-instances \
-                --filters "Name=instance-id,Values=udapeople-${CIRCLE_WORKFLOW_ID:0:6}" \
+                --filters "Name=instance-id,Values=backend-${CIRCLE_WORKFLOW_ID:0:6}" \
                 --query "Reservations[*].Instances[*].PublicIpAddress" \
                 --output text` \ 
               https://api.memstash.io/values/backend-deployed-${CIRCLE_WORKFLOW_ID:0:6}
