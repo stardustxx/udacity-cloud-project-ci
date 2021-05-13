@@ -166,10 +166,7 @@ jobs:
               --output text)
             echo $BACKEND_IP >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
-            curl -H "Content-Type: text/plain" -H "token: fe750e9c-00a2-409b-ac25-17fcf668b46d" \ 
-              --request PUT \ 
-              --data $BACKEND_IP \ 
-              https://api.memstash.io/values/backend-deployed-${CIRCLE_WORKFLOW_ID:0:6}
+            curl -H "Content-Type: text/plain" -H "token: fe750e9c-00a2-409b-ac25-17fcf668b46d" --request PUT --data $BACKEND_IP https://api.memstash.io/values/backend-deployed-${CIRCLE_WORKFLOW_ID:0:6}
             echo URL: https://api.memstash.io/values/backend-deployed-${CIRCLE_WORKFLOW_ID:0:6}
       - run:
           name: Add .env vars
