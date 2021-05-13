@@ -305,6 +305,7 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update tar gzip curl
+            pip install awscli
       - run:
           name: Backend smoke test
           command: |
@@ -316,7 +317,7 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            if curl -s  "http://udapeople-${CIRCLE_WORKFLOW_ID:0:6}.s3-website-us-west-2.amazonaws.com/#/employees" | grep "Welcome"
+            if curl -s  "http://udapeople-${CIRCLE_WORKFLOW_ID:0:6}.s3-website-us-west-2.amazonaws.com" | grep "Welcome"
             then
               return 0
             else
