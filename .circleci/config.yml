@@ -387,7 +387,7 @@ jobs:
             then
               aws cloudformation delete-stack --stack-name "backend-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "frontend-${OldWorkflowID}"
-              aws s3 rm s3://udapeople-${OLD_WORKFLOW_ID} --recursive
+              aws s3 rm s3://udapeople-${OLD_WORKFLOW_ID:0:6} --recursive
             fi
       
       - revert-migrations:
