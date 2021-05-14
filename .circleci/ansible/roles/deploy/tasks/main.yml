@@ -10,6 +10,7 @@
     tar -xzvf backend_artifact.tar.gz -C backend
     rm backend_artifact.tar.gz
     cd backend/
+    npm install
     npm run build
     cd dist
     echo `pwd` >> ansible-test.txt
