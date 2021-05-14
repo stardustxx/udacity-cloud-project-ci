@@ -395,7 +395,7 @@ jobs:
             
 
 workflows:
-  prod-deployment:
+  default:
     jobs:
       - build-frontend
       - build-backend
