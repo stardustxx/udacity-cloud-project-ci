@@ -238,8 +238,17 @@ jobs:
       - run:
           name: Send migration results to memstash
           command: |
-            curl -H "Content-Type: text/plain" -H "token: fe750e9c-00a2-409b-ac25-17fcf668b46d" --request PUT \
-              --data "1" https://api.memstash.io/values/migration-${CIRCLE_WORKFLOW_ID:0:6}    
+            cd backend
+            if grep -q "success" migration_output.txt
+            then
+              echo "sending 1"
+              curl -H "Content-Type: text/plain" -H "token: fe750e9c-00a2-409b-ac25-17fcf668b46d" --request PUT \
+                --data "1" https://api.memstash.io/values/migration-${CIRCLE_WORKFLOW_ID:0:6}    
+            else
+              echo "sending 0"
+              curl -H "Content-Type: text/plain" -H "token: fe750e9c-00a2-409b-ac25-17fcf668b46d" --request PUT \
+                --data "0" https://api.memstash.io/values/migration-${CIRCLE_WORKFLOW_ID:0:6}   
+            fi
 
   deploy-frontend:
     docker:
